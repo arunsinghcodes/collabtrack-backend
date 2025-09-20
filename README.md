@@ -98,3 +98,81 @@ Collab Track Backend is a RESTful API service designed to support collaborative 
 - `POST /:projectId/members` - Add project member (secured, Admin only)
 - `PUT /:projectId/members/:userId` - Update member role (secured, Admin only)
 - `DELETE /:projectId/members/:userId` - Remove member (secured, Admin only)
+
+**Task Routes** (`/api/v1/tasks/`)
+
+- `GET /:projectId` - List project tasks (secured, role-based)
+- `POST /:projectId` - Create task (secured, Admin/Project Admin)
+- `GET /:projectId/t/:taskId` - Get task details (secured, role-based)
+- `PUT /:projectId/t/:taskId` - Update task (secured, Admin/Project Admin)
+- `DELETE /:projectId/t/:taskId` - Delete task (secured, Admin/Project Admin)
+- `POST /:projectId/t/:taskId/subtasks` - Create subtask (secured, Admin/Project Admin)
+- `PUT /:projectId/st/:subTaskId` - Update subtask (secured, role-based)
+- `DELETE /:projectId/st/:subTaskId` - Delete subtask (secured, Admin/Project Admin)
+
+**Note Routes** (`/api/v1/notes/`)
+
+- `GET /:projectId` - List project notes (secured, role-based)
+- `POST /:projectId` - Create note (secured, Admin only)
+- `GET /:projectId/n/:noteId` - Get note details (secured, role-based)
+- `PUT /:projectId/n/:noteId` - Update note (secured, Admin only)
+- `DELETE /:projectId/n/:noteId` - Delete note (secured, Admin only)
+
+**Health Check** (`/api/v1/healthcheck/`)
+
+- `GET /` - System health status
+
+#### 4.2 Permission Matrix
+
+| Feature                    | Admin | Project Admin | Member |
+| -------------------------- | ----- | ------------- | ------ |
+| Create Project             | ✓     | ✗             | ✗      |
+| Update/Delete Project      | ✓     | ✗             | ✗      |
+| Manage Project Members     | ✓     | ✗             | ✗      |
+| Create/Update/Delete Tasks | ✓     | ✓             | ✗      |
+| View Tasks                 | ✓     | ✓             | ✓      |
+| Update Subtask Status      | ✓     | ✓             | ✓      |
+| Create/Delete Subtasks     | ✓     | ✓             | ✗      |
+| Create/Update/Delete Notes | ✓     | ✗             | ✗      |
+| View Notes                 | ✓     | ✓             | ✓      |
+
+#### 4.3 Data Models
+
+**User Roles:**
+
+- `admin` - Full system access
+- `project_admin` - Project-level administrative access
+- `member` - Basic project member access
+
+**Task Status:**
+
+- `todo` - Task not started
+- `in_progress` - Task currently being worked on
+- `done` - Task completed
+
+### 5. Security Features
+
+- JWT-based authentication with refresh tokens
+- Role-based authorization middleware
+- Input validation on all endpoints
+- Email verification for account security
+- Secure password reset functionality
+- File upload security with Multer middleware
+- CORS configuration for cross-origin requests
+
+### 6. File Management
+
+- Support for multiple file attachments on tasks
+- Files stored in public/images directory
+- File metadata tracking (URL, MIME type, size)
+- Secure file upload handling
+
+### 7. Success Criteria
+
+- Secure user authentication and authorization system
+- Complete project lifecycle management
+- Hierarchical task and subtask organization
+- Role-based access control implementation
+- File attachment capability for enhanced collaboration
+- Email notification system for user verification and password reset
+- Comprehensive API documentation through endpoint structure
