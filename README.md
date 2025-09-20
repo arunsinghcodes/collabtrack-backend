@@ -69,3 +69,20 @@ Collab Track Backend is a RESTful API service designed to support collaborative 
 #### 3.7 System Health
 
 - **Health Check:** API endpoint for system status monitoring
+
+### 4. Technical Specifications
+
+#### 4.1 API Endpoints Structure
+
+**Authentication Routes** (`/api/v1/auth/`)
+
+- `POST /register` - User registration
+- `POST /login` - User authentication
+- `POST /logout` - User logout (secured)
+- `GET /current-user` - Get current user info (secured)
+- `POST /change-password` - Change user password (secured)
+- `POST /refresh-token` - Refresh access token
+- `GET /verify-email/:verificationToken` - Email verification
+- `POST /forgot-password` - Request password reset
+- `POST /reset-password/:resetToken` - Reset forgotten password
+- `POST /resend-email-verification` - Resend verification email (secured)
