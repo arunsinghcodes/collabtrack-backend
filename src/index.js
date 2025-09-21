@@ -4,13 +4,13 @@ import connectDB from "./db/index.js";
 
 const PORT = process.env.PORT || 8080;
 
-connectDB().then(() => {
-  try {
+connectDB()
+  .then(() => {
     app.listen(PORT, () => {
       console.log(`Server is running up at http://localhost:${PORT}`);
     });
-  } catch (error) {
-    console.log("MongoDB connection error",error);
+  })
+  .catch((error) => {
+    console.log("MongoDB connection error", error);
     process.exit(1);
-  }
-});
+  });
