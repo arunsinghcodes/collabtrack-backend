@@ -10,9 +10,9 @@ const sendEmail = async (options) => {
     },
   });
 
-  const emailTextual = mailGenerator.generatePlaintext(options.mailContent);
+  const emailTextual = mailGenerator.generatePlaintext(options.mailgenContent);
 
-  const emailHtml = mailGenerator.generate(options.mailContent);
+  const emailHtml = mailGenerator.generate(options.mailgenContent);
 
   const transporter = nodemailer.createTransport({
     host: process.env.MAILTRAP_SMTP_HOST,
@@ -35,14 +35,14 @@ const sendEmail = async (options) => {
     await transporter.sendMail(mail);
   } catch (error) {
     console.error(
-      "Email service failed siliently. Make sure that you have provied your MAILTRAP credentials in the .env file"
+      "Email service failed siliently. Make sure that you have provided your MAILTRAP credentials in the .env file"
     );
-    console.log("Error : ", error);
+    console.error("Error: ", error);
   }
 };
 
 // this is contnet of the mail for sending
-const emailVerficationMailgenContent = (username, verificationUrl) => {
+const emailVerificationMailgenContent = (username, verificationUrl) => {
   return {
     body: {
       name: username,
@@ -57,13 +57,13 @@ const emailVerficationMailgenContent = (username, verificationUrl) => {
         },
       },
       outro:
-        "Need hlep, or have questions? Just reply to this email, we'd love to help",
+        "Need help, or have questions? Just reply to this email, we'd love to help.",
     },
   };
 };
 
 // this is the content of the mail for reset password.
-const forgotPasswordMailgenContent = (username, passwordRestUrl) => {
+const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
   return {
     body: {
       name: username,
@@ -72,9 +72,9 @@ const forgotPasswordMailgenContent = (username, passwordRestUrl) => {
         instructions:
           "To reset your password click on the following button or link",
         button: {
-          color: "#22bc66",
-          text: "Rest password",
-          link: passwordRestUrl,
+          color: "#22BC66",
+          text: "Reset password",
+          link: passwordResetUrl,
         },
       },
       outro:
@@ -83,7 +83,11 @@ const forgotPasswordMailgenContent = (username, passwordRestUrl) => {
   };
 };
 
-export { emailVerficationMailgenContent, forgotPasswordMailgenContent , sendEmail };
+export {
+  emailVerificationMailgenContent,
+  forgotPasswordMailgenContent,
+  sendEmail,
+};
 
 
 /**
