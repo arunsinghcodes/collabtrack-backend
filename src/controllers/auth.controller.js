@@ -44,10 +44,10 @@ const registerUser = asyncHandler(async (req, res) => {
     isEmailVerified: false,
   });
 
-  const { unHashedToken, hashToken, tokenExpiry } =
+  const { unHashedToken, hashedToken, tokenExpiry } =
     user.generateTemporaryToken();
 
-  user.emailVerificationToken = hashToken;
+  user.emailVerificationToken = hashedToken;
   user.emailVerificationExpiry = tokenExpiry;
 
   await user.save({ validateBeforeSave: false });
@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         { user: createdUser },
-        "User registered successfully and verfication email has been send on your email"
+        "User registered successfully and verification email has been sent on your email"
       )
     );
 });
