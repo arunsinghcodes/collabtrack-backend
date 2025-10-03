@@ -21,7 +21,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
   } catch (error) {
     throw new ApiError(
       500,
-      "Something went wrong while genrating access token"
+      "Something went wrong while generating access token"
     );
   }
 };
@@ -57,9 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
     subject: "Please verify your email",
     mailgenContent: emailVerificationMailgenContent(
       user.username,
-      `${req.protocol}://${req.get(
-        "host"
-      )}/api/v1/users/verify-email/${unHashedToken}`
+      `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
     ),
   });
 
@@ -83,29 +81,29 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, username } = req.body;
 
   if (!email) {
-    throw new ApiError(400, "Usernam or email is required");
+    throw new ApiError(400, "Email is required");
   }
 
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(400, "User does not exits");
+    throw new ApiError(400, "User does not exists");
   }
 
-  const isPasswordValid = user.isPasswordCorrect(password);
+  const isPasswordValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid creadentials");
+    throw new ApiError(400, "Invalid credentials");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
   );
 
-  const loggedInuser = await User.findById(user._id).select(
+  const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
   );
 
@@ -122,11 +120,11 @@ const login = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         {
-          user: loggedInuser,
+          user: loggedInUser,
           accessToken,
           refreshToken,
         },
-        "User loggedin successfully"
+        "User logged in successfully"
       )
     );
 });
