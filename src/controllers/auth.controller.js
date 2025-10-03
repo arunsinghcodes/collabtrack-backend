@@ -12,6 +12,11 @@ import jwt from "jsonwebtoken";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
+    
+    if (!user) {
+      throw new ApiError(404, "User not found while generating tokens");
+    }
+
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
@@ -46,6 +51,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { unHashedToken, hashedToken, tokenExpiry } =
     user.generateTemporaryToken();
+  
+  console.log(`unHashedToken : ${unHashedToken}, hashedToken : ${hashedToken}, tokenExpiry:  ${tokenExpiry}`)
 
   user.emailVerificationToken = hashedToken;
   user.emailVerificationExpiry = tokenExpiry;
