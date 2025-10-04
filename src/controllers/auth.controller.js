@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
-    
+
     if (!user) {
       throw new ApiError(404, "User not found while generating tokens");
     }
@@ -51,8 +51,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { unHashedToken, hashedToken, tokenExpiry } =
     user.generateTemporaryToken();
-  
-  console.log(`unHashedToken : ${unHashedToken}, hashedToken : ${hashedToken}, tokenExpiry:  ${tokenExpiry}`)
+
+  console.log(
+    `unHashedToken : ${unHashedToken}, hashedToken : ${hashedToken}, tokenExpiry:  ${tokenExpiry}`
+  );
 
   user.emailVerificationToken = hashedToken;
   user.emailVerificationExpiry = tokenExpiry;
@@ -64,7 +66,9 @@ const registerUser = asyncHandler(async (req, res) => {
     subject: "Please verify your email",
     mailgenContent: emailVerificationMailgenContent(
       user.username,
-      `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
+      `${req.protocol}://${req.get(
+        "host"
+      )}/api/v1/users/verify-email/${unHashedToken}`
     ),
   });
 
@@ -136,4 +140,29 @@ const login = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, login };
+const logoutUser = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: "",
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out"));
+});
+
+export { registerUser, login, logoutUser };
