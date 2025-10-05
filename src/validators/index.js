@@ -35,4 +35,20 @@ const userChangeCurrentPasswordValidator = () => {
   ];
 };
 
-export { userRegisterValidator, userLoginValidator , userChangeCurrentPasswordValidator};
+const userForgetPasswordValidator = () => {
+  return [
+    body("email")
+      .notEmpty()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Email is invalid"),
+  ];
+};
+
+export {
+  userRegisterValidator,
+  userLoginValidator,
+  userChangeCurrentPasswordValidator,
+  userForgetPasswordValidator,
+  userForgetPasswordValidator,
+};
