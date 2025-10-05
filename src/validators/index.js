@@ -35,7 +35,7 @@ const userChangeCurrentPasswordValidator = () => {
   ];
 };
 
-const userForgetPasswordValidator = () => {
+const userForgotPasswordValidator = () => {
   return [
     body("email")
       .notEmpty()
@@ -53,7 +53,6 @@ export {
   userRegisterValidator,
   userLoginValidator,
   userChangeCurrentPasswordValidator,
-  userForgetPasswordValidator,
-  userForgetPasswordValidator,
+  userForgotPasswordValidator,
   userRestForgotPasswordValidator,
 };
