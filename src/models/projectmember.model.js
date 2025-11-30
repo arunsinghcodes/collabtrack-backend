@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
 
-const projectMember = new Schema(
+const projectMemberSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -22,4 +22,7 @@ const projectMember = new Schema(
   { timestamps: true }
 );
 
-export const ProjectMember = mongoose.model("ProjectMember", projectMember);
+export const ProjectMember = mongoose.model(
+  "ProjectMember",
+  projectMemberSchema
+);
