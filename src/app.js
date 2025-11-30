@@ -28,10 +28,12 @@ app.use(
 
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import authRouter from "./routes/auth.routes.js";
+import projectRouter from "./routes/project.routes.js";
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/projects", projectRouter)
 
 app.get("/", (req, res) => {
     res.status(200).send("This home for collab track backend servcies 😎")

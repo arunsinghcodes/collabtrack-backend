@@ -49,10 +49,18 @@ const userRestForgotPasswordValidator = () => {
   return [body("password").notEmpty().withMessage("password is required")];
 };
 
+const createProjectValidator = () => {
+  return [
+    body("name").notEmpty().withMessage("Project is required"),
+    body("description").optional(),
+  ];
+};
+
 export {
   userRegisterValidator,
   userLoginValidator,
   userChangeCurrentPasswordValidator,
   userForgotPasswordValidator,
   userRestForgotPasswordValidator,
+  createProjectValidator
 };
