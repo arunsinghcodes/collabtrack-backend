@@ -69,7 +69,7 @@ const registerUser = asyncHandler(async (req, res) => {
       user.username,
       `${req.protocol}://${req.get(
         "host"
-      )}/api/v1/users/verify-email/${unHashedToken}`
+      )}/api/v1/auth/verify-email/${unHashedToken}`
     ),
   });
 
@@ -182,7 +182,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   let hashedToken = crypto
     .createHash("sha256")
     .update(verificationToken)
-    .disgest("hex");
+    .digest("hex");
 
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
@@ -234,7 +234,7 @@ const sendEmailVerification = asyncHandler(async (req, res) => {
       user.username,
       `${req.protocol}://${req.get(
         "host"
-      )}/api/v1/users/verify-email/${unHashedToken}`
+      )}/api/v1/auth/verify-email/${unHashedToken}`
     ),
   });
 
