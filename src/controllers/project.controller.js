@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { ProjectMember } from "../models/projectmember.model.js";
 import { UserRolesEnum } from "../utils/contants.js";
 import { ApiResponse } from "../utils/api-response.js";
+import { ApiError } from "../utils/api-error.js";
 
 const createProject = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
@@ -79,4 +80,25 @@ const getProjects = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, projects, "Projects fetched successfully!"));
 });
 
-export { createProject, getProjects };
+const getProjectById = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+
+  if (!projectId || projectId.trim() === "") {
+    throw new ApiError(400, "Project ID is missing");
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
+    throw new ApiError(400, "Invalid project ID");
+  }
+
+  const project = await Project.findById(projectId);
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, project, "Project fetched successfully"));
+});
+
+export { createProject, getProjects, getProjectById };

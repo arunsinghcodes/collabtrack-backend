@@ -29,11 +29,38 @@ app.use(
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import projectRouter from "./routes/project.routes.js";
+import { ApiError } from "./utils/api-error.js";
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/projects", projectRouter)
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err); // optional: logs the error in console
+
+  if (err instanceof ApiError) {
+    // If it's an ApiError, respond using its fields
+    return res.status(err.statusCode).json({
+      statusCode: err.statusCode,
+      success: err.success,
+      message: err.message,
+      data: err.data,
+      errors: err.errors,
+    });
+  }
+
+  // For unexpected errors
+  res.status(500).json({
+    statusCode: 500,
+    success: false,
+    message: err.message || "Internal Server Error",
+    data: null,
+    errors: [],
+  });
+});
+
 
 app.get("/", (req, res) => {
     res.status(200).send("This home for collab track backend servcies 😎")
