@@ -3,6 +3,7 @@ import {
   createProject,
   getProjectById,
   getProjects,
+  updateProject,
 } from "../controllers/project.controller.js";
 import {
   validateProjectPermission,
@@ -10,7 +11,7 @@ import {
 } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validator.middleware.js";
 import { createProjectValidator } from "../validators/index.js";
-import { AvailableUserRoles } from "../utils/contants.js";
+import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
 
 const router = Router();
 
@@ -24,6 +25,12 @@ router
 
 router
   .route("/:projectId")
-  .get(validateProjectPermission(AvailableUserRoles), getProjectById);
+  .get(validateProjectPermission(AvailableUserRoles), getProjectById)
+  .put(
+    validateProjectPermission([UserRolesEnum.ADMIN]),
+    createProjectValidator(),
+    validate,
+    updateProject
+  );
 
 export default router;

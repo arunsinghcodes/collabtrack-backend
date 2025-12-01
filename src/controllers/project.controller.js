@@ -101,4 +101,26 @@ const getProjectById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, project, "Project fetched successfully"));
 });
 
-export { createProject, getProjects, getProjectById };
+const updateProject = asyncHandler(async (req, res) => {
+  const { name, description } = req.body;
+  const { projectId } = req.params;
+
+  const project = await Project.findByIdAndUpdate(
+    projectId,
+    {
+      name,
+      description,
+    },
+    { new: true }
+  );
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, project, "Project upated successfully"));
+});
+
+export { createProject, getProjects, getProjectById , updateProject};
