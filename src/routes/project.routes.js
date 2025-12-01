@@ -1,6 +1,7 @@
 import Router from "express";
 import {
   createProject,
+  deleteProject,
   getProjectById,
   getProjects,
   updateProject,
@@ -31,6 +32,7 @@ router
     createProjectValidator(),
     validate,
     updateProject
-  );
+  )
+  .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteProject);
 
 export default router;
