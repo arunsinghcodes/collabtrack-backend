@@ -3,6 +3,7 @@ import {
   createProject,
   deleteProject,
   getProjectById,
+  getProjectMembers,
   getProjects,
   updateProject,
 } from "../controllers/project.controller.js";
@@ -34,5 +35,7 @@ router
     updateProject
   )
   .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteProject);
+
+router.route("/:projectId/members").get(getProjectMembers);
 
 export default router;
