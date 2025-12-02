@@ -1,5 +1,6 @@
 import Router from "express";
 import {
+  addMembersToProject,
   createProject,
   deleteProject,
   getProjectById,
@@ -12,7 +13,7 @@ import {
   verifyJWT,
 } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validator.middleware.js";
-import { createProjectValidator } from "../validators/index.js";
+import { addMembertoProjectValidator, createProjectValidator } from "../validators/index.js";
 import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
 
 const router = Router();
@@ -36,6 +37,14 @@ router
   )
   .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteProject);
 
-router.route("/:projectId/members").get(getProjectMembers);
+router
+  .route("/:projectId/members")
+  .get(getProjectMembers)
+  .post(
+    validateProjectPermission([UserRolesEnum.ADMIN]),
+    addMembertoProjectValidator(),
+    validate,
+    addMembersToProject
+  );
 
 export default router;

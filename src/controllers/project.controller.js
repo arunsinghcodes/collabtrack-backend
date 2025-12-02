@@ -5,6 +5,7 @@ import { ProjectMember } from "../models/projectmember.model.js";
 import { UserRolesEnum } from "../utils/contants.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
+import { User } from "../models/user.models.js";
 
 const createProject = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
@@ -140,7 +141,7 @@ const deleteProject = asyncHandler(async (req, res) => {
 const getProjectMembers = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
     throw new ApiError(400, "Invalid project ID");
   }
 
@@ -198,6 +199,35 @@ const getProjectMembers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, projectMembers, "Project members fetched"));
 });
 
+const addMembersToProject = asyncHandler(async (req, res) => {
+  const { email, role } = req.body;
+  const { projectId } = req.params;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(404, "User does not exists");
+  }
+
+  await ProjectMember.findOneAndUpdate(
+    {
+      user: new mongoose.Types.ObjectId(user._id),
+      project: new mongoose.Types.ObjectId(projectId),
+    },
+    {
+      user: new mongoose.Types.ObjectId(user._id),
+      project: new mongoose.Types.ObjectId(projectId),
+      role: role,
+    },
+    {
+      new: true,
+      upsert: true,
+    }
+  );
+
+  return res.status(200).json(new ApiResponse(200, "Member add successfully"));
+});
+
 export {
   createProject,
   getProjects,
@@ -205,4 +235,5 @@ export {
   updateProject,
   deleteProject,
   getProjectMembers,
+  addMembersToProject,
 };
