@@ -2,6 +2,7 @@ import Router from "express";
 import {
   addMembersToProject,
   createProject,
+  deleteMember,
   deleteProject,
   getProjectById,
   getProjectMembers,
@@ -53,6 +54,7 @@ router
 
 router
   .route("/:projectId/members/:userId")
-  .put(validateProjectPermission([UserRolesEnum.ADMIN]), updateMemberRole);
+  .put(validateProjectPermission([UserRolesEnum.ADMIN]), updateMemberRole)
+  .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteMember);
 
 export default router;
