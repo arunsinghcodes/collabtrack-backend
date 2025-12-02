@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Project } from "../models/project.models.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { ProjectMember } from "../models/projectmember.model.js";
-import { UserRolesEnum } from "../utils/contants.js";
+import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import { User } from "../models/user.models.js";
@@ -228,6 +228,47 @@ const addMembersToProject = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, "Member add successfully"));
 });
 
+const updateMemberRole = asyncHandler(async (req, res) => {
+  const { projectId, userId } = req.params;
+  const { newRole } = req.body;
+
+  if (!AvailableUserRoles.includes(newRole)) {
+    throw new ApiError(400, "Invalid Role");
+  }
+
+  let projectMember = await ProjectMember.findOne({
+    project: new mongoose.Types.ObjectId(projectId),
+    user: new mongoose.Types.ObjectId(userId),
+  });
+
+  if (!projectMember) {
+    throw new ApiError(400, "Project member not found");
+  }
+
+  projectMember = await ProjectMember.findByIdAndUpdate(
+    projectId._id,
+    {
+      role: newRole,
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!projectMember) {
+    throw new ApiError(404, "Project member not found");
+  }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        projectMember,
+        "Project member role updated successfully"
+      )
+    );
+});
+
 export {
   createProject,
   getProjects,
@@ -236,4 +277,5 @@ export {
   deleteProject,
   getProjectMembers,
   addMembersToProject,
+  updateMemberRole
 };
