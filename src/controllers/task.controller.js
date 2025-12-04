@@ -23,4 +23,15 @@ const getProjectTasks = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, tasks, "Task fetched successfully"));
 });
 
+
+const createTask = asyncHandler(async (req, res) =>{
+    const {title, description, assignedTo, status} = req.body;
+    const {projectId} = req.params;
+
+    const project = await Project.findById(projectId);
+
+    
+    return res.status(201).json(201, task, "Task created successfully");
+})
+
 export { getProjectTasks };
