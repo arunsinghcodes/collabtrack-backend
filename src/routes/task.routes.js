@@ -4,7 +4,7 @@ import {
   verifyJWT,
 } from "../middlewares/auth.middleware.js";
 import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
-import { getProjectTasks } from "../controllers/task.controller.js";
+import { createTask, getProjectTasks } from "../controllers/task.controller.js";
 import { validate } from "../middlewares/validator.middleware.js";
 
 const router = Router();
