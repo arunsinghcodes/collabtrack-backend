@@ -1,6 +1,7 @@
 import { body } from "express-validator";
 import { AvailableUserRoles } from "../utils/contants.js";
 
+// Validator for user registration mean to validate the incoming request body
 const userRegisterValidator = () => {
   return [
     body("email")
@@ -21,6 +22,7 @@ const userRegisterValidator = () => {
   ];
 };
 
+// Validator for user login to validate the incoming request body
 const userLoginValidator = () => {
   return [
     body("email").optional().isEmail().withMessage("Email is invalid"),
@@ -28,6 +30,7 @@ const userLoginValidator = () => {
   ];
 };
 
+// Validator for changing current password
 const userChangeCurrentPasswordValidator = () => {
   return [
     body("oldpassword").notEmpty().withMessage("Old password is required"),
@@ -35,6 +38,7 @@ const userChangeCurrentPasswordValidator = () => {
   ];
 };
 
+// Validator for forgot password
 const userForgotPasswordValidator = () => {
   return [
     body("email")
@@ -45,10 +49,12 @@ const userForgotPasswordValidator = () => {
   ];
 };
 
+// Validator for reset forgot password
 const userRestForgotPasswordValidator = () => {
   return [body("password").notEmpty().withMessage("password is required")];
 };
 
+// Validator for creating a project
 const createProjectValidator = () => {
   return [
     body("name").notEmpty().withMessage("Project is required"),
@@ -56,6 +62,7 @@ const createProjectValidator = () => {
   ];
 };
 
+// Validator for adding member to project
 const addMembertoProjectValidator = () => {
   return [
     body("email")
@@ -72,6 +79,7 @@ const addMembertoProjectValidator = () => {
   ];
 };
 
+// export all validators
 export {
   userRegisterValidator,
   userLoginValidator,

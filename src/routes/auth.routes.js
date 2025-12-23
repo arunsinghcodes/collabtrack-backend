@@ -24,6 +24,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 // Unsecured routes
+
+// Registrater the user => public route => validate request body => validator middleware => controller
 router.route("/register").post(userRegisterValidator(), validate, registerUser);
 router.route("/login").post(userLoginValidator(), validate, login);
 router.route("/verify-email/:verificationToken").get(verifyEmail);

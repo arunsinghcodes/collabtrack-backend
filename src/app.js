@@ -1,13 +1,18 @@
 import express from "express";
 import cors from "cors";
+// for parsing cookies
 import cookieParser from "cookie-parser";
 
 const app = express();
 
 // Basic configuration
+// limit the size of incoming JSON and URL-encoded payloads to 16kb
 app.use(express.json({ limit: "16kb" }));
+// parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+// serve static files from the "public" directory
 app.use(express.static("public"));
+// parse cookies
 app.use(cookieParser());
 
 // handling cookie

@@ -1,6 +1,7 @@
 import { ApiError } from "../utils/api-error.js";
 import { validationResult } from "express-validator";
 
+// Middleware to validate the request based on the defined validators
 export const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
