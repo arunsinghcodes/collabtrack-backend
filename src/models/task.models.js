@@ -14,6 +14,10 @@ const taskSchema = new Schema(
       ref: "Project",
       required: true,
     },
+    assignedTo: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     assignedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
