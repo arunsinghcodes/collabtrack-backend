@@ -4,6 +4,7 @@ import { Task } from "../models/task.models.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
+import { User } from "../models/user.models.js";
 
 const getProjectTasks = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
@@ -33,6 +34,13 @@ const createTask = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project not found");
   }
 
+  if (assignedTo) {
+    const userExists = await User.exists({ _id: assignedTo });
+    if (!userExists) {
+      throw new ApiError(404, "Assigned user not found");
+    }
+  }
+
   const files = req.files || [];
 
   const attachments = files.map((file) => {
@@ -47,7 +55,7 @@ const createTask = asyncHandler(async (req, res) => {
     title,
     description,
     project: new mongoose.Types.ObjectId(projectId),
-    assignedTo: assignedTo ? new mongoose.Types.ObjectId(projectId) : undefined,
+    assignedTo,
 
     status,
     assignedBy: new mongoose.Types.ObjectId(req.user._id),
