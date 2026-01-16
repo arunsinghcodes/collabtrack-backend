@@ -4,7 +4,14 @@ import {
   verifyJWT,
 } from "../middlewares/auth.middleware.js";
 import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
-import { createTask, deleteTask, getProjectTasks, getTaskById, updateTask } from "../controllers/task.controller.js";
+import {
+  createSubTask,
+  createTask,
+  deleteTask,
+  getProjectTasks,
+  getTaskById,
+  updateTask,
+} from "../controllers/task.controller.js";
 import { validate } from "../middlewares/validator.middleware.js";
 
 const router = Router();
@@ -16,11 +23,18 @@ router
   .get(validateProjectPermission(AvailableUserRoles), getProjectTasks)
   .post(validateProjectPermission([UserRolesEnum.ADMIN]), validate, createTask);
 
+router
+  .route("/:projectId/tasks/:taskId")
+  .get(validateProjectPermission(AvailableUserRoles), getTaskById)
+  .put(validateProjectPermission([UserRolesEnum.ADMIN]), validate, updateTask)
+  .delete(
+    validateProjectPermission([UserRolesEnum.ADMIN]),
+    validate,
+    deleteTask
+  );
 
 router
-.route("/:projectId/tasks/:taskId")
-.get(validateProjectPermission(AvailableUserRoles), getTaskById)
-.put(validateProjectPermission([UserRolesEnum.ADMIN]),validate, updateTask)
-.delete(validateProjectPermission([UserRolesEnum.ADMIN]),validate, deleteTask)
+.route("/:projectId/tasks/:taskId/subtasks")
+.post(validateProjectPermission([UserRolesEnum.ADMIN]), createSubTask);
 
 export default router;

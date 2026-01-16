@@ -5,6 +5,7 @@ import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { User } from "../models/user.models.js";
+import { Subtask } from "../models/subtask.models.js";
 
 const getProjectTasks = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
@@ -242,7 +243,7 @@ const deleteTask = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project not found");
   }
 
-   const task = await Task.findOneAndDelete({
+  const task = await Task.findOneAndDelete({
     _id: taskId,
     project: projectId,
   });
@@ -256,4 +257,43 @@ const deleteTask = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { taskId }, "Task deleted successfully"));
 });
 
-export { getProjectTasks, createTask, getTaskById, updateTask, deleteTask };
+const createSubTask = asyncHandler(async (req, res) => {
+  const { projectId, taskId } = req.params;
+  const { title } = req.body;
+
+  if (!projectId || !taskId) {
+    throw new ApiError(400, "Missing required parameters");
+  }
+  if (
+    !mongoose.Types.ObjectId.isValid(projectId) ||
+    !mongoose.Types.ObjectId.isValid(taskId)
+  ) {
+    throw new ApiError(400, "Invalid projectId or taskId");
+  }
+
+  const projectExists = await Project.exists({ _id: projectId });
+  if (!projectExists) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const taskExists = await Task.exists({ _id: taskId, project: projectId });
+  if (!taskExists) {
+    throw new ApiError(404, "Task not found in this project");
+  }
+
+  if (!title) {
+    throw new ApiError(400, "Subtask title is required");
+  }
+
+  const subtask = await Subtask.create({
+    title,
+    task: taskId,
+    createdBy: req.user._id,
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, subtask, "Subtask created successfully"));
+});
+
+export { getProjectTasks, createTask, getTaskById, updateTask, deleteTask, createSubTask };
