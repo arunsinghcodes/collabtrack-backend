@@ -10,6 +10,7 @@ import {
   deleteTask,
   getProjectTasks,
   getTaskById,
+  updateSubTask,
   updateTask,
 } from "../controllers/task.controller.js";
 import { validate } from "../middlewares/validator.middleware.js";
@@ -36,5 +37,9 @@ router
 router
 .route("/:projectId/tasks/:taskId/subtasks")
 .post(validateProjectPermission([UserRolesEnum.ADMIN]), createSubTask);
+
+router
+  .route("/:projectId/subtasks/:subTaskId")
+  .put(validateProjectPermission(AvailableUserRoles), updateSubTask);
 
 export default router;

@@ -296,4 +296,56 @@ const createSubTask = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, subtask, "Subtask created successfully"));
 });
 
-export { getProjectTasks, createTask, getTaskById, updateTask, deleteTask, createSubTask };
+const updateSubTask = asyncHandler(async (req, res) => {
+  const { projectId, subTaskId } = req.params;
+  const { title, isComleted } = req.body;
+
+  console.log(projectId, subTaskId, "Heloo");
+
+  if (!projectId || !subTaskId) {
+    throw new ApiError(400, "Missing required parameters");
+  }
+  if (
+    !mongoose.Types.ObjectId.isValid(projectId) ||
+    !mongoose.Types.ObjectId.isValid(subTaskId)
+  ) {
+    throw new ApiError(400, "Invalid projectId or subTaskId");
+  }
+
+  const projectExists = await Project.exists({ _id: projectId });
+  if (!projectExists) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const updateData = {};
+  if (title !== undefined) updateData.title = title;
+  if (isComleted !== undefined) updateData.isComleted = isComleted;
+
+  const subtask = await Subtask.findOneAndUpdate(
+    { _id: subTaskId },
+    updateData,
+    { new: true }
+  ).populate({
+    path: "task",
+    match: { project: projectId },
+    select: "_id title project",
+  });
+
+  if (!subtask || !subtask.task) {
+    throw new ApiError(404, "Subtask not found in this project");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, subtask, "Subtask updated successfully"));
+});
+
+export {
+  getProjectTasks,
+  createTask,
+  getTaskById,
+  updateTask,
+  deleteTask,
+  createSubTask,
+  updateSubTask
+};
