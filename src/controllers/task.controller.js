@@ -162,6 +162,32 @@ const getTaskById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, task[0], "Task fetched successfully"));
 });
 
+const getSubtasksByTask = asyncHandler(async (req, res) => {
+  const { projectId, taskId } = req.params;
+
+  if (
+    !mongoose.Types.ObjectId.isValid(projectId) ||
+    !mongoose.Types.ObjectId.isValid(taskId)
+  ) {
+    throw new ApiError(400, "Invalid projectId or taskId");
+  }
+
+  const projectExists = await Project.exists({ _id: projectId });
+  if (!projectExists) throw new ApiError(404, "Project not found");
+
+  const taskExists = await Task.exists({ _id: taskId, project: projectId });
+  if (!taskExists) throw new ApiError(404, "Task not found in this project");
+
+  const subtasks = await Subtask.find({ task: taskId }).populate({
+    path: "createdBy",
+    select: "_id username fullName avatar",
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, subtasks, "Subtasks fetched successfully"));
+});
+
 const updateTask = asyncHandler(async (req, res) => {
   const { projectId, taskId } = req.params;
   const { title, description, assignedTo, status } = req.body;
@@ -344,7 +370,10 @@ const deleteSubTask = asyncHandler(async (req, res) => {
   if (!projectId || !subTaskId) {
     throw new ApiError(400, "Missing required parameters");
   }
-  if (!mongoose.Types.ObjectId.isValid(projectId) || !mongoose.Types.ObjectId.isValid(subTaskId)) {
+  if (
+    !mongoose.Types.ObjectId.isValid(projectId) ||
+    !mongoose.Types.ObjectId.isValid(subTaskId)
+  ) {
     throw new ApiError(400, "Invalid projectId or subTaskId");
   }
 
@@ -359,20 +388,19 @@ const deleteSubTask = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Subtask not found in this project");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, { subTaskId }, "Subtask deleted successfully")
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { subTaskId }, "Subtask deleted successfully"));
 });
-
-
 
 export {
   getProjectTasks,
   createTask,
   getTaskById,
+  getSubtasksByTask,
   updateTask,
   deleteTask,
   createSubTask,
   updateSubTask,
-  deleteSubTask
+  deleteSubTask,
 };

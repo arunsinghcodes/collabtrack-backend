@@ -10,6 +10,7 @@ import {
   deleteSubTask,
   deleteTask,
   getProjectTasks,
+  getSubtasksByTask,
   getTaskById,
   updateSubTask,
   updateTask,
@@ -37,6 +38,7 @@ router
 
 router
   .route("/:projectId/tasks/:taskId/subtasks")
+  .get(validateProjectPermission(AvailableUserRoles), getSubtasksByTask)
   .post(validateProjectPermission([UserRolesEnum.ADMIN]), createSubTask);
 
 router
