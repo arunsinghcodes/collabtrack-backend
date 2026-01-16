@@ -340,6 +340,34 @@ const updateSubTask = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, subtask, "Subtask updated successfully"));
 });
 
+const deleteSubTask = asyncHandler(async (req, res) => {
+  const { projectId, subTaskId } = req.params;
+
+  if (!projectId || !subTaskId) {
+    throw new ApiError(400, "Missing required parameters");
+  }
+  if (!mongoose.Types.ObjectId.isValid(projectId) || !mongoose.Types.ObjectId.isValid(subTaskId)) {
+    throw new ApiError(400, "Invalid projectId or subTaskId");
+  }
+
+  const projectExists = await Project.exists({ _id: projectId });
+  if (!projectExists) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const subtask = await Subtask.findOneAndDelete({ _id: subTaskId });
+
+  if (!subtask) {
+    throw new ApiError(404, "Subtask not found in this project");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, { subTaskId }, "Subtask deleted successfully")
+  );
+});
+
+
+
 export {
   getProjectTasks,
   createTask,
@@ -347,5 +375,6 @@ export {
   updateTask,
   deleteTask,
   createSubTask,
-  updateSubTask
+  updateSubTask,
+  deleteSubTask
 };

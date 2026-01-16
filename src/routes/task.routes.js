@@ -7,6 +7,7 @@ import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
 import {
   createSubTask,
   createTask,
+  deleteSubTask,
   deleteTask,
   getProjectTasks,
   getTaskById,
@@ -35,11 +36,15 @@ router
   );
 
 router
-.route("/:projectId/tasks/:taskId/subtasks")
-.post(validateProjectPermission([UserRolesEnum.ADMIN]), createSubTask);
+  .route("/:projectId/tasks/:taskId/subtasks")
+  .post(validateProjectPermission([UserRolesEnum.ADMIN]), createSubTask);
 
 router
   .route("/:projectId/subtasks/:subTaskId")
   .put(validateProjectPermission(AvailableUserRoles), updateSubTask);
+
+router
+  .route("/:projectId/subtasks/:subTaskId")
+  .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteSubTask);
 
 export default router;
