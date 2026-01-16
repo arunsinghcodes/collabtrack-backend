@@ -161,4 +161,66 @@ const getTaskById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, task[0], "Task fetched successfully"));
 });
 
-export { getProjectTasks, createTask, getTaskById };
+const updateTask = asyncHandler(async (req, res) => {
+  const { projectId, taskId } = req.params;
+  const { title, description, assignedTo, status } = req.body;
+
+  if (!req.params.projectId || !req.params.taskId) {
+    throw new ApiError(400, "Missing required parameters");
+  }
+
+  if (
+    !mongoose.Types.ObjectId.isValid(taskId) ||
+    !mongoose.Types.ObjectId.isValid(projectId)
+  ) {
+    throw new ApiError(400, "Invalid taskId or projectId");
+  }
+
+  const projectExists = await Project.exists({ _id: projectId });
+  if (!projectExists) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  if (assignedTo) {
+    if (!mongoose.Types.ObjectId.isValid(assignedTo)) {
+      throw new ApiError(400, "Invalid assignedTo userId");
+    }
+
+    const userExists = await User.exists({ _id: assignedTo });
+    if (!userExists) {
+      throw new ApiError(404, "Assigned user not found");
+    }
+  }
+
+  const updateData = {};
+  if (title !== undefined) updateData.title = title;
+  if (description !== undefined) updateData.description = description;
+  if (status !== undefined) updateData.status = status;
+  if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+
+  if (req.files?.length) {
+    const attachments = req.files.map((file) => ({
+      url: `${process.env.SERVER_URL}/images/${file.originalname}`,
+      mimetype: file.mimetype,
+      size: file.size,
+    }));
+
+    updateData.$push = { attachments: { $each: attachments } };
+  }
+
+  const task = await Task.findOneAndUpdate(
+    { _id: taskId, project: projectId },
+    updateData,
+    { new: true }
+  );
+
+  if (!task) {
+    throw new ApiError(404, "Task not found in this project");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, task[0], "Task upated successfully"));
+});
+
+export { getProjectTasks, createTask, getTaskById, updateTask };
