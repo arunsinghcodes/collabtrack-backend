@@ -300,8 +300,6 @@ const updateSubTask = asyncHandler(async (req, res) => {
   const { projectId, subTaskId } = req.params;
   const { title, isComleted } = req.body;
 
-  console.log(projectId, subTaskId, "Heloo");
-
   if (!projectId || !subTaskId) {
     throw new ApiError(400, "Missing required parameters");
   }
