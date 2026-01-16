@@ -223,4 +223,37 @@ const updateTask = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, task[0], "Task upated successfully"));
 });
 
-export { getProjectTasks, createTask, getTaskById, updateTask };
+const deleteTask = asyncHandler(async (req, res) => {
+  const { projectId, taskId } = req.params;
+
+  if (!projectId || !taskId) {
+    throw new ApiError(400, "Missing required parameters");
+  }
+
+  if (
+    !mongoose.Types.ObjectId.isValid(taskId) ||
+    !mongoose.Types.ObjectId.isValid(projectId)
+  ) {
+    throw new ApiError(400, "Invalid taskId or projectId");
+  }
+
+  const projectExists = await Project.exists({ _id: projectId });
+  if (!projectExists) {
+    throw new ApiError(404, "Project not found");
+  }
+
+   const task = await Task.findOneAndDelete({
+    _id: taskId,
+    project: projectId,
+  });
+
+  if (!task) {
+    throw new ApiError(404, "Task not found in this project");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { taskId }, "Task deleted successfully"));
+});
+
+export { getProjectTasks, createTask, getTaskById, updateTask, deleteTask };

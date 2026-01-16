@@ -4,7 +4,7 @@ import {
   verifyJWT,
 } from "../middlewares/auth.middleware.js";
 import { AvailableUserRoles, UserRolesEnum } from "../utils/contants.js";
-import { createTask, getProjectTasks, getTaskById, updateTask } from "../controllers/task.controller.js";
+import { createTask, deleteTask, getProjectTasks, getTaskById, updateTask } from "../controllers/task.controller.js";
 import { validate } from "../middlewares/validator.middleware.js";
 
 const router = Router();
@@ -21,7 +21,6 @@ router
 .route("/:projectId/tasks/:taskId")
 .get(validateProjectPermission(AvailableUserRoles), getTaskById)
 .put(validateProjectPermission([UserRolesEnum.ADMIN]),validate, updateTask)
-
-
+.delete(validateProjectPermission([UserRolesEnum.ADMIN]),validate, deleteTask)
 
 export default router;
