@@ -298,7 +298,7 @@ const createSubTask = asyncHandler(async (req, res) => {
 
 const updateSubTask = asyncHandler(async (req, res) => {
   const { projectId, subTaskId } = req.params;
-  const { title, isComleted } = req.body;
+  const { title, isCompleted } = req.body;
 
   if (!projectId || !subTaskId) {
     throw new ApiError(400, "Missing required parameters");
@@ -317,7 +317,7 @@ const updateSubTask = asyncHandler(async (req, res) => {
 
   const updateData = {};
   if (title !== undefined) updateData.title = title;
-  if (isComleted !== undefined) updateData.isComleted = isComleted;
+  if (isCompleted !== undefined) updateData.isCompleted = isCompleted;
 
   const subtask = await Subtask.findOneAndUpdate(
     { _id: subTaskId },
