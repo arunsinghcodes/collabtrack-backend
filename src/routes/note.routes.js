@@ -23,7 +23,7 @@ router
   .post(validateProjectPermission([UserRolesEnum.ADMIN]), createNote);
 
 router
-  .route("/:projectId")
+  .route("/:projectId/notes/:noteId")
   .get(validateProjectPermission(AvailableUserRoles), getNoteById)
   .put(validateProjectPermission([UserRolesEnum.ADMIN]), updateNote)
   .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteNote);
