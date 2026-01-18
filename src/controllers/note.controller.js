@@ -23,7 +23,27 @@ const getNote = asyncHandler(async (req, res) => {
 });
 
 const createNote = asyncHandler(async (req, res) => {
-  // create Notes
+  const { projectId } = req.params;
+  const { content } = req.body;
+
+  if (!content) {
+    throw new ApiError(400, "Note content is required");
+  }
+
+  const project = await Project.findById(projectId);
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const note = await ProjectNote.create({
+    project: projectId,
+    createdBY: req.user._id,
+    content,
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, note, "Note created successfully"));
 });
 
 const getNoteById = asyncHandler(async (req, res) => {
