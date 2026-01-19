@@ -67,8 +67,34 @@ const getNoteById = asyncHandler(async (req, res) => {
 });
 
 const updateNote = asyncHandler(async (req, res) => {
-  // update note controller
-   const { projectId, notesId } = req.params;
+  const { projectId, notesId } = req.params;
+  const { content } = req.body;
+
+  if (!content) {
+    throw new ApiError(400, "Note content is required");
+  }
+
+  const project = await Project.findById(projectId);
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const note = await ProjectNote.findOneAndUpdate(
+    {
+      _id: notesId,
+      project: projectId,
+    },
+    { content },
+    { new: true },
+  );
+
+  if (!note) {
+    throw new ApiError(404, "Note not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, note, "Note updated successfully"));
 });
 
 const deleteNote = asyncHandler(async (req, res) => {
