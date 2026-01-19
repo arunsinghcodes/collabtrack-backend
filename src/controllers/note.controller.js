@@ -48,6 +48,7 @@ const createNote = asyncHandler(async (req, res) => {
 
 const getNoteById = asyncHandler(async (req, res) => {
   // getNote by Id
+  const { projectId, notesId } = req.params;
 });
 
 const updateNote = asyncHandler(async (req, res) => {
