@@ -58,6 +58,7 @@ const updateNote = asyncHandler(async (req, res) => {
 
 const deleteNote = asyncHandler(async (req, res) => {
   // delete Note controller
+  const { projectId, notesId } = req.params;
 });
 
 export { getNote, createNote, getNoteById, updateNote, deleteNote };
