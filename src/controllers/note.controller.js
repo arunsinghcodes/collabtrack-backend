@@ -53,6 +53,7 @@ const getNoteById = asyncHandler(async (req, res) => {
 
 const updateNote = asyncHandler(async (req, res) => {
   // update note controller
+   const { projectId, notesId } = req.params;
 });
 
 const deleteNote = asyncHandler(async (req, res) => {
