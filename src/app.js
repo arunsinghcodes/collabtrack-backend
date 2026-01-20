@@ -3,6 +3,18 @@ import cors from "cors";
 // for parsing cookies
 import cookieParser from "cookie-parser";
 
+// import the routes
+
+import healthCheckRouter from "./routes/healthcheck.routes.js";
+import authRouter from "./routes/auth.routes.js";
+import projectRouter from "./routes/project.routes.js";
+import taskRouter from "./routes/task.routes.js";
+import noteRouter from "./routes/note.routes.js";
+import { ApiError } from "./utils/api-error.js";
+
+// Middleware
+import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
+
 const app = express();
 
 // Basic configuration
@@ -29,14 +41,9 @@ app.use(
   })
 );
 
-// import the routes
 
-import healthCheckRouter from "./routes/healthcheck.routes.js";
-import authRouter from "./routes/auth.routes.js";
-import projectRouter from "./routes/project.routes.js";
-import taskRouter from "./routes/task.routes.js";
-import noteRouter from "./routes/note.routes.js";
-import { ApiError } from "./utils/api-error.js";
+
+app.use("/api", apiLimiter);
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
