@@ -14,6 +14,7 @@ import { ApiError } from "./utils/api-error.js";
 
 // Middleware
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
+import { authLimiter } from "./middlewares/authLimiter.middleware.js";
 
 const app = express();
 
@@ -38,16 +39,14 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
-
-
 
 app.use("/api", apiLimiter);
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
-app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth", authLimiter, authRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/notes", noteRouter);
@@ -77,13 +76,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-
 app.get("/", (req, res) => {
-    res.status(200).json({
-      success: true,
-      message: "CollabTrack Backend API is running 🚀",
-      version: "1.0.0"
-    })
+  res.status(200).json({
+    success: true,
+    message: "CollabTrack Backend API is running 🚀",
+    version: "1.0.0",
+  });
   console.log("Welcome to Collab Track API's end points");
 });
 
