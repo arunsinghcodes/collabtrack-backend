@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 // for parsing cookies
 import cookieParser from "cookie-parser";
 
@@ -31,6 +32,9 @@ app.use(cookieParser());
 // handling cookie
 
 app.use(cookieParser());
+
+// Helmet (security headers) prevents clickjacking, XSS
+app.use(helmet());
 
 // CORS configuration
 app.use(
