@@ -1,20 +1,20 @@
+import mongoose from "mongoose";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
-/** 
-const healthCheck = (req, res) => {
-  try {
-    res
-      .status(200)
-      .json(new ApiResponse(200, { message: "Server is running" }));
-  } catch (error) {
-
-  }
-};
-*/
-
 const healthCheck = asyncHandler(async (req, res) => {
-  res.status(200).json(new ApiResponse(200, { message: "Server is running" }));
+  const dbStatus =
+    mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+
+  res.status(200).json(
+    new ApiResponse(200, {
+      service: "collabtrack-api",
+      status: "healthy",
+      database: dbStatus,
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    }),
+  );
 });
 
 export { healthCheck };

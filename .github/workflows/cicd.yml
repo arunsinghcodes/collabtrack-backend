@@ -43,3 +43,20 @@ jobs:
       - name: Trigger Render deployment
         run: |
           curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+      # 8️⃣ Wait for Render to restart
+      - name: Wait for deployment
+        run: sleep 25
+
+      # 9️⃣ Health check
+      - name: Health check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            https://collabtrack-api.onrender.com/api/v1/healthcheck)
+
+          if [ "$STATUS" -ne 200 ]; then
+            echo "❌ Health check failed"
+            exit 1
+          fi
+
+          echo "✅ Health check passed"
