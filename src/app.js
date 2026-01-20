@@ -72,7 +72,11 @@ app.use((err, req, res, next) => {
 
 
 app.get("/", (req, res) => {
-    res.status(200).send("This home for collab track backend servcies 😎")
+    res.status(200).json({
+      success: true,
+      message: "CollabTrack Backend API is running 🚀",
+      version: "1.0.0"
+    })
   console.log("Welcome to Collab Track API's end points");
 });
 
