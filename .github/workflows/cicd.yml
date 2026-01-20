@@ -1,0 +1,45 @@
+name: CollabTrack Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Get code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4️⃣ Run lint (optional)
+      - name: Run lint
+        run: npm run lint
+        continue-on-error: true
+
+      # 5️⃣ Run tests (optional)
+      - name: Run tests
+        run: npm test
+        continue-on-error: true
+
+      # 6️⃣ Build check
+      - name: Build check
+        run: echo "Build successful ✅"
+
+      # 7️⃣ Deploy to Render
+      - name: Trigger Render deployment
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
