@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
+
 // for parsing cookies
 import cookieParser from "cookie-parser";
 
@@ -16,6 +18,7 @@ import { ApiError } from "./utils/api-error.js";
 // Middleware
 import { apiLimiter } from "./middlewares/rateLimit.middleware.js";
 import { authLimiter } from "./middlewares/authLimiter.middleware.js";
+import { swaggerSetup } from "./config/swagger.js";
 
 const app = express();
 
@@ -54,6 +57,9 @@ app.use("/api/v1/auth", authLimiter, authRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/notes", noteRouter);
+
+// API's docs
+swaggerSetup(app);
 
 // Global error handler
 app.use((err, req, res, next) => {
