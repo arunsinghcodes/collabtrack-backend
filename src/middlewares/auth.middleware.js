@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 export const verifyJWT = asyncHandler(async (req, res, next) => {
   const token =
     req.cookies?.accessToken ||
-    req.header("Authorization")?.replace("Bearer ", "");
+    req.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
     throw new ApiError(401, "Unauthorized request");
@@ -17,7 +17,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const user = await User.findById(decodedToken?._id).select(
-      "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+      "-password -refreshToken -emailVerificationToken -emailVerificationExpiry",
     );
 
     if (!user) {
@@ -56,7 +56,7 @@ export const validateProjectPermission = (roles = []) => {
     if (!roles.includes(projectMember.role)) {
       throw new ApiError(
         403,
-        "You do not have permission to perform this action"
+        "You do not have permission to perform this action",
       );
     }
 
