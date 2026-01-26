@@ -53,7 +53,7 @@ app.use(
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
-app.use("/api/v1/auth", authLimiter, authRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/notes", noteRouter);
