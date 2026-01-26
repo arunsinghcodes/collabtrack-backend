@@ -49,7 +49,7 @@ app.use(
   }),
 );
 
-app.use("/api", apiLimiter);
+// app.use("/api", apiLimiter);
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
