@@ -260,7 +260,7 @@ const sendEmailVerification = asyncHandler(async (req, res) => {
 
   // if email is already verified, throw an error
   if (user.isEmailVerified) {
-    throw ApiError(409, "Email is already verified");
+    throw new ApiError(409, "Email is already verified");
   }
 
   // generate email verification token
