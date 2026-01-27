@@ -231,7 +231,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   // if user not found, throw an error
   if (!user) {
     return res.redirect(
-      `${process.env.FRONTEND_URL}/auth/verify/error`
+      `${process.env.FRONTEND_URL}/verify/error`
     );
   }
 
@@ -244,7 +244,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
   // respond with success message
   return res.redirect(
-    `${process.env.FRONTEND_URL}/auth/verify/success`
+    `${process.env.FRONTEND_URL}/verify/success`
   );
 });
 
