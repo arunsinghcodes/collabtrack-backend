@@ -210,9 +210,10 @@ const verifyEmail = asyncHandler(async (req, res) => {
   // extract the verification token from request params
   const { verificationToken } = req.params;
 
-  // if token is missing, throw an error
   if (!verificationToken) {
-    throw new ApiError(400, "Email verification token is missing");
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/auth/verify/error`
+    );
   }
 
   // hash the token
@@ -229,7 +230,9 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
   // if user not found, throw an error
   if (!user) {
-    throw new ApiError(400, "Token is invalid or expired");
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/auth/verify/error`
+    );
   }
 
   // update user to mark email as verified
@@ -240,9 +243,9 @@ const verifyEmail = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   // respond with success message
-  return res
-    .status(200)
-    .json(new ApiResponse(200, { isEmailVerified: true }, "Email is verified"));
+  return res.redirect(
+    `${process.env.FRONTEND_URL}/auth/verify/success`
+  );
 });
 
 // Controller to resend email verification
