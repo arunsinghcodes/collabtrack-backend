@@ -250,8 +250,13 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
 // Controller to resend email verification
 const sendEmailVerification = asyncHandler(async (req, res) => {
-  // find the user from database
-  const user = await User.findById(req.user?._id);
+  const { email } = req.body;
+
+  if (!email) {
+    throw new ApiError(400, "Email is required");
+  }
+
+  const user = await User.findOne({ email });
 
   // if user not found, throw an error
   if (!user) {
