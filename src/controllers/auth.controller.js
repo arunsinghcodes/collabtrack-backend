@@ -20,12 +20,12 @@ const generateAccessAndRefreshTokens = async (userId) => {
     if (!user) {
       throw new ApiError(404, "User not found while generating tokens");
     }
-    
+
     // generate access and refresh tokens
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
-    // save the refresh token in database 
+    // save the refresh token in database
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
@@ -148,7 +148,9 @@ const login = asyncHandler(async (req, res) => {
   // set tokens in http only cookies and respond with success message
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
   };
 
   // respond with tokens and user info
@@ -161,8 +163,6 @@ const login = asyncHandler(async (req, res) => {
         200,
         {
           user: loggedInUser,
-          accessToken,
-          refreshToken,
         },
         "User logged in successfully"
       )
@@ -211,9 +211,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   const { verificationToken } = req.params;
 
   if (!verificationToken) {
-    return res.redirect(
-      `${process.env.FRONTEND_URL}/auth/verify/error`
-    );
+    return res.redirect(`${process.env.FRONTEND_URL}/auth/verify/error`);
   }
 
   // hash the token
@@ -230,9 +228,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
   // if user not found, throw an error
   if (!user) {
-    return res.redirect(
-      `${process.env.FRONTEND_URL}/verify/error`
-    );
+    return res.redirect(`${process.env.FRONTEND_URL}/verify/error`);
   }
 
   // update user to mark email as verified
@@ -243,9 +239,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   // respond with success message
-  return res.redirect(
-    `${process.env.FRONTEND_URL}/verify/success`
-  );
+  return res.redirect(`${process.env.FRONTEND_URL}/verify/success`);
 });
 
 // Controller to resend email verification
@@ -382,7 +376,7 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
   user.forgotPasswordToken = hashedToken;
   user.forgotPasswordExpiry = tokenExpiry;
 
- // save the user
+  // save the user
   await user.save({ validateBeforeSave: false });
 
   // send forgot password email
