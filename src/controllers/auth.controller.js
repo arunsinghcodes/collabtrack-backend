@@ -147,11 +147,11 @@ const login = asyncHandler(async (req, res) => {
 
   // set tokens in http only cookies and respond with success message
   const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-  };
+  httpOnly: true,
+  secure: true,            // must be true for SameSite=None
+  sameSite: "none",        // 🔥 THIS FIXES YOUR ISSUE
+  path: "/",
+};
 
   // respond with tokens and user info
   return res
